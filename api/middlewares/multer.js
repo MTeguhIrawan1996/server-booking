@@ -1,6 +1,6 @@
-const multer = require("multer");
-const path = require("path");
-const fs = require("fs");
+import multer from "multer";
+import path from "path";
+import fs from "fs";
 // import uuid from "uuid/v4";
 const maxSize = 1 * 1024 * 1024; /* 1mb */
 
@@ -58,4 +58,4 @@ function checkFileType(file, cb) {
   }
 }
 
-module.exports = { uploadMultiple, upload };
+export { upload, uploadMultiple };

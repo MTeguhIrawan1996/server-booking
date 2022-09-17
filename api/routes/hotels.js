@@ -1,13 +1,21 @@
-const router = require("express").Router();
-const hotelsControllers = require("../controllers/hotelsControllers");
-const { upload } = require("../middlewares/multer");
+import express from "express";
+import {
+  createdHotels,
+  deleteHotels,
+  editHotels,
+  getHotels,
+  getHotelsById,
+} from "../controllers/hotelsController.js";
+import { upload } from "../middlewares/multer.js";
+import { verifyAdmin, verifyToken } from "../utils/verifyToken.js";
 
 // CRUD
+const router = express.Router();
 
-router.post("/", upload, hotelsControllers.createdHotels);
-router.put("/:id", upload, hotelsControllers.editHotels);
-router.delete("/:id", upload, hotelsControllers.deleteHotels);
-router.get("/:id", upload, hotelsControllers.getHotelsById);
-router.get("/", upload, hotelsControllers.getHotels);
+router.post("/", upload, verifyToken, verifyAdmin, createdHotels);
+router.put("/:id", upload, verifyToken, verifyAdmin, editHotels);
+router.delete("/:id", upload, verifyToken, verifyAdmin, deleteHotels);
+router.get("/:id", upload, getHotelsById);
+router.get("/", upload, getHotels);
 
-module.exports = router;
+export default router;

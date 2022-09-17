@@ -1,10 +1,13 @@
-const router = require("express").Router();
+import express from "express";
+import { login, register } from "../controllers/authController.js";
+import { upload } from "../middlewares/multer.js";
+
+const router = express.Router();
 
 router.get("/", (req, res) => {
   res.send("hallo World auth end point");
 });
-router.get("/register", (req, res) => {
-  res.send("Register auth end point");
-});
+router.post("/register", upload, register);
+router.post("/login", upload, login);
 
-module.exports = router;
+export default router;

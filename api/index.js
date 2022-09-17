@@ -1,12 +1,13 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const bodyParser = require("body-parser");
-const authRouter = require("./routes/auth");
-const usersRouter = require("./routes/users");
-const hotelsRouter = require("./routes/hotels");
-const roomsRouter = require("./routes/rooms");
+import express from "express";
+import dotenv from "dotenv";
+import bodyParser from "body-parser";
+import mongoose from "mongoose";
+import authRouter from "./routes/auth.js";
+import usersRouter from "./routes/users.js";
+import hotelsRouter from "./routes/hotels.js";
+// import roomsRoute from "./routes/rooms.js";
+import cookieParser from "cookie-parser";
 
-const mongoose = require("mongoose");
 dotenv.config();
 
 const app = express();
@@ -30,10 +31,11 @@ mongoose.connection.on("connected", () => {
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/hotels", hotelsRouter);
-app.use("/api/rooms", roomsRouter);
+// app.use("/api/rooms", roomsRouter);
 
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
