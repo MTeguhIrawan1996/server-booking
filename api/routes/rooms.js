@@ -1,7 +1,23 @@
-const router = require("express").Router();
+import express from "express";
+import {
+  createdRoom,
+  deleteRoom,
+  editRoom,
+  getRoom,
+  getRooms,
+  updateRoomAvailability,
+} from "../controllers/roomController.js";
+import { upload } from "../middlewares/multer.js";
+import { verifyAdmin, verifyToken } from "../utils/verifyToken.js";
 
-router.get("/", (req, res) => {
-  res.send("rooms auth end point");
-});
+// CRUD
+const router = express.Router();
 
-module.exports = router;
+router.post("/:hotelid", upload, verifyToken, verifyAdmin, createdRoom);
+router.put("/:id", verifyToken, verifyAdmin, editRoom);
+router.delete("/:id/:hotelid", verifyToken, verifyAdmin, deleteRoom);
+router.get("/:id", getRoom);
+router.get("/", getRooms);
+router.put("/availability/:id", updateRoomAvailability);
+
+export default router;

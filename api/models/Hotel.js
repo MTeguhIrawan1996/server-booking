@@ -9,10 +9,12 @@ const hotelSchema = new Schema({
   type: {
     type: String,
     required: true,
+    uppercase: true,
   },
   city: {
     type: String,
     required: true,
+    uppercase: true,
   },
   address: {
     type: String,

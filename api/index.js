@@ -5,8 +5,9 @@ import mongoose from "mongoose";
 import authRouter from "./routes/auth.js";
 import usersRouter from "./routes/users.js";
 import hotelsRouter from "./routes/hotels.js";
-// import roomsRoute from "./routes/rooms.js";
+import roomsRouter from "./routes/rooms.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 dotenv.config();
 
@@ -28,14 +29,14 @@ mongoose.connection.on("connected", () => {
   console.log("MongoDB connected");
 });
 // Middlewares
-
+app.use(cors());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/hotels", hotelsRouter);
-// app.use("/api/rooms", roomsRouter);
+app.use("/api/rooms", roomsRouter);
 
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
