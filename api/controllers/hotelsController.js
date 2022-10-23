@@ -1,4 +1,5 @@
 import Hotel from "../models/Hotel.js";
+import Room from "../models/Room.js";
 import { createError } from "../utils/error.js";
 
 const createdHotels = async (req, res) => {
@@ -41,8 +42,13 @@ const getHotelsById = async (req, res) => {
   }
 };
 const getHotels = async (req, res, next) => {
+  const { min, max, ...others } = req.query;
+  const maxValue = await Hotel.findOne().sort({ cheapestPrice: -1 });
   try {
-    const hotel = await Hotel.find();
+    const hotel = await Hotel.find({
+      ...others,
+      cheapestPrice: { $gte: min || 1, $lte: max || maxValue.cheapestPrice },
+    }).limit(req.query.limit);
     res.status(200).json(hotel);
   } catch (err) {
     next(err);
@@ -57,22 +63,44 @@ const countByType = async (req, res, next) => {
     const cabinCount = await Hotel.countDocuments({ type: "CABIN" });
 
     res.status(200).json([
-      { type: "HOTEL", count: hotelCount },
-      { type: "APARTMENT", count: apartmentCount },
-      { type: "RESORT", count: resortCount },
-      { type: "VILLA", count: villaCount },
-      { type: "CABIN", count: cabinCount },
+      { type: "Hotel", count: hotelCount },
+      { type: "Apartment", count: apartmentCount },
+      { type: "Resort", count: resortCount },
+      { type: "Villa", count: villaCount },
+      { type: "Cabin", count: cabinCount },
     ]);
   } catch (err) {
     next(err);
   }
 };
 const countByCity = async (req, res, next) => {
-  const cities = req.query.cities.split(",");
+  // const cities = req.query.cities.split(",");
   try {
+    const countHotel = await Hotel.aggregate([
+      {
+        $group: {
+          _id: "$city",
+          count: { $sum: 1 },
+        },
+      },
+    ]).limit(5);
+    // const list = await Promise.all(
+    //   cities.map((city) => {
+    //     return Hotel.countDocuments({ city: city.toUpperCase() });
+    //   })
+    // );
+    res.status(200).json(countHotel);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const getHotelRooms = async (req, res, next) => {
+  try {
+    const hotel = await Hotel.findById(req.params.id);
     const list = await Promise.all(
-      cities.map((city) => {
-        return Hotel.countDocuments({ city: city.toUpperCase() });
+      hotel.rooms.map((room) => {
+        return Room.findById(room);
       })
     );
     res.status(200).json(list);
@@ -89,4 +117,5 @@ export {
   getHotels,
   countByCity,
   countByType,
+  getHotelRooms,
 };
