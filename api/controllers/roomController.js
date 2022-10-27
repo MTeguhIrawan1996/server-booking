@@ -37,7 +37,7 @@ const updateRoomAvailability = async (req, res, next) => {
       { "roomNumbers._id": req.params.id },
       {
         $push: {
-          "roomNumbers.$.unavailableDates": req.body.dates,
+          "roomNumbers.$.unavailableDate": req.body.dates,
         },
       }
     );
